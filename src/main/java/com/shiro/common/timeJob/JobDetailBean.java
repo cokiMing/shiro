@@ -24,11 +24,12 @@ public class JobDetailBean extends QuartzJobBean {
         Object bean = SpringContextHolder.getBean(objectName);
         Object arguments = getArguments(jobExecutionContext);
         try{
-            Method method = bean.getClass().getMethod(methodName);
-            if (arguments != null){
-                method.invoke(bean,arguments);
+            if (arguments == null){
+                Method method = bean.getClass().getMethod(methodName);
+                method.invoke(bean);
             }else{
-                method.invoke(bean,null);
+                Method method = bean.getClass().getMethod(methodName,arguments.getClass());
+                method.invoke(bean,arguments);
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -24,4 +24,10 @@ public class Constant {
     public final static String VERSION_REBIRTH = "REBIRTH";
     public final static String VERSION_AFTERBIRTH = "AFTERBIRTH";
     public final static String VERSION_AFTERBIRTH_PLUS = "AFTERBIRTH_PLUS";
+    /**
+     * 出行方式
+     */
+    public final static String MODE_DRIVING = "driving";
+    public final static String MODE_WALKING = "walking";
+    public final static String MODE_BICYCLING = "bicycling";
 }

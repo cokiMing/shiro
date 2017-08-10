@@ -10,6 +10,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
+ * 实时天气爬虫
+ * 抓取百度首页天气
  * Created by wuyiming on 2017/8/9.
  */
 public class WeatherCrawler {
@@ -19,7 +21,7 @@ public class WeatherCrawler {
     private static Log log = LogFactory.getLog(WeatherCrawler.class);
 
     /**
-     * 抓取百度天气信息
+     * 获得当前天气信息
      * @param city
      * @return
      */
@@ -40,8 +42,9 @@ public class WeatherCrawler {
                 stringBuilder.append(str);
             }
             content = stringBuilder.toString();
+            return content.substring(content.indexOf("\"op_weather4_twoicon_shishi_sub\"")+33,content.indexOf("(实时)"));
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error(city + ":" + e.getMessage());
             return null;
         }finally {
             try{
@@ -50,20 +53,22 @@ public class WeatherCrawler {
                 log.error(e.getMessage());
             }
         }
-        return content.substring(content.indexOf("\"op_weather4_twoicon_shishi_sub\"")+33,content.indexOf("(实时)"));
     }
 
-    public void saveWeathInHangzhou(){
-        String weathInfo = getWeathInfo("杭州");
+    /**
+     * 保存天气信息至redis
+     */
+    public void cacheWeather(String cityName){
+        String weathInfo = getWeathInfo(cityName);
         if (weathInfo != null){
-            log.info("redis记录weather: " + weathInfo);
+            log.info("redis记录天气: " + weathInfo);
             redisDao.set("weather",weathInfo);
         }
     }
 
     public static void main(String[] args){
         long millis = System.currentTimeMillis();
-        String weathInfo = getWeathInfo("杭州");
+        String weathInfo = getWeathInfo("西安");
         System.out.println(weathInfo);
         System.out.println("耗时："+(System.currentTimeMillis() - millis));
     }

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by wuyiming on 2017/8/2.
  */
 @RestController
-public class ShiroMainController {
+public class ShiroMainController extends AbstractController{
     
     /**
      * 验证用户名和密码
@@ -39,6 +39,7 @@ public class ShiroMainController {
             response.setStatus(401);
             return Result.fail("登录失败5次");
         } catch (Exception ex){
+            log.error(ex.getMessage());
             response.setStatus(401);
             return Result.fail("用户名或密码错误");
         }
