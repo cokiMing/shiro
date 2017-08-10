@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="me.gacl.mapping.userMapper"就是me.gacl.mapping(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.shiro.dao.db.user.UserMapper">
+    <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，id属性值必须是唯一的，不能够重复
+    使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型
+    resultType="me.gacl.domain.User"就表示将查询结果封装成一个User类的对象返回
+    User类就是users表所对应的实体类
+    -->
+    <!-- 根据id查询得到一个user对象 -->
+    <select id="getUserById" parameterType="string" resultType="com.shiro.entity.DO.UserDO">
+        select * from user where id=#{id}
+    </select>
+    <!-- 根据账号查找user对象 -->
+    <select id="getUserByAccount" parameterType="string" resultType="com.shiro.entity.DO.UserDO">
+        SELECT * FROM user where account=#{account}
+    </select>
+
+    <!-- 新增user对象 -->
+    <insert id="insertUser" parameterType="com.shiro.entity.DO.UserDO">
+        INSERT INTO user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="tel != null">
+                tel,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tel != null">
+                #{tel,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+</mapper>

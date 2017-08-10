@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- bean注册 -->
+    <bean id="weatherCrawler" class="com.shiro.common.crawler.WeatherCrawler"/>
+
+    <!-- 测试detail -->
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <!-- durability 表示任务完成之后是否依然保留到数据库，默认false   -->
+        <property name="durability" value="true" />
+        <!-- 目标类SpringQuartz.java -->
+        <property name="jobClass" value="com.shiro.common.timeJob.SpringQuartzTest"/>
+        <property name="requestsRecovery" value="true"/>
+    </bean>
+
+
+    <bean id="jobDetailBean" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="durability" value="true" />
+        <property name="jobClass" value="com.shiro.common.timeJob.JobDetailBean"/>
+        <property name="requestsRecovery" value="true"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="object"/>
+                <entry key="targetMethod" value="method"/>
+                <entry key="arguments" value="arguments"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="weatherDetailBean" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="durability" value="true" />
+        <property name="jobClass" value="com.shiro.common.timeJob.JobDetailBean"/>
+        <property name="requestsRecovery" value="true"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="targetObject" value="weatherCrawler"/>
+                <entry key="targetMethod" value="saveWeathInHangzhou"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- CornTrigger配置 -->
+    <bean id="cornTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="jobDetail"/>
+        <!-- 每隔2分钟触发一次 -->
+        <property name="cronExpression" value="0 0/2 * * * ?"/>
+    </bean>
+    <bean id="weatherTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="weatherDetailBean"/>
+        <!-- 每天6点开始，到晚上20点结束，每隔10分钟触发一次 -->
+        <property name="cronExpression" value="0 0/10 6-20 * * ?"/>
+    </bean>
+
+    <!-- quartz核心调度器 -->
+    <bean id="quartzScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- 数据库配置 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- quartz配置 -->
+        <property name="configLocation" value="classpath:/conf/quartz.properties"/>
+        <property name="applicationContextSchedulerContextKey"  value="applicationContextKey"/>
+        <!-- QuartzScheduler 启动时更新己存在的Job，这样就不用每次修改targetObject后删除qrtz_job_details表对应记录了 -->
+        <property name="overwriteExistingJobs" value="true" />
+        <!-- 设置自动启动 -->
+        <property name="autoStartup" value="true" />
+        <property name="startupDelay" value="5"/>
+        <!-- 注册trigger -->
+        <property name="triggers">
+            <list>
+                <!--<ref bean="cornTrigger"/>-->
+                <ref bean="weatherTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 数据库配置 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${job.driver}"/>
+        <property name="url" value="${job.url}"/>
+        <property name="username" value="${job.username}"/>
+        <property name="password" value="${job.password}"/>
+    </bean>
+</beans>
