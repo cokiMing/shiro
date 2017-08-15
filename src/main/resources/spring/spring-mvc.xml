@@ -53,6 +53,7 @@
 
     <!-- 扫描注解相关的bean -->
     <context:component-scan base-package="com.shiro.controller" />
+    <context:component-scan base-package="com.shiro.common.aspect"/>
 
     <!-- interceptor -->
     <mvc:interceptors>
@@ -60,5 +61,6 @@
     </mvc:interceptors>
 
     <!-- 打开aop -->
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <aop:aspectj-autoproxy expose-proxy="true" />
+
 </beans>

@@ -1,5 +1,6 @@
 package com.shiro.common.crawler;
 
+import com.shiro.common.AbstractCommonComponent;
 import com.shiro.dao.redis.RedisDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

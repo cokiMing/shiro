@@ -8,6 +8,7 @@ import com.shiro.common.util.NumUtil;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -18,9 +19,20 @@ import java.util.List;
  * 第三方提供的接口
  * Created by wuyiming on 2017/8/9.
  */
+@Component
 public class ApiUtil {
 
     private final static String GOOGLEMAP_API_KEY = "AIzaSyCB64p-Gctfzvp1TRb4lMQCebu1FQPHhNI";
+
+    private static ApiUtil apiUtil = new ApiUtil();
+
+    public synchronized static ApiUtil getInstant(){
+        return apiUtil;
+    }
+
+    public String ApiUtilTest(){
+        return "test ok!";
+    }
 
     /**
      * 驾车路径查询
@@ -30,7 +42,7 @@ public class ApiUtil {
      * @param desLng
      * @return
      */
-    public static JSONObject getDrivingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
+    public JSONObject getDrivingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
         return getStepsByGoogleMap(originLat,originLng,desLat,desLng, Constant.MODE_DRIVING);
     }
 
@@ -42,7 +54,7 @@ public class ApiUtil {
      * @param desLng
      * @return
      */
-    public static JSONObject getBicyclingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
+    public JSONObject getBicyclingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
         return getStepsByGoogleMap(originLat,originLng,desLat,desLng, Constant.MODE_BICYCLING);
     }
 
@@ -54,10 +66,10 @@ public class ApiUtil {
      * @param desLng
      * @return
      */
-    private static JSONObject getStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng,String mode){
+    private JSONObject getStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng,String mode){
         String origin = originLat + "," + originLng;
         String destination = desLat + "," + desLng;
-        String doublePattern = "0.000";
+        String doublePattern = "0.0000";
 
         try{
             Client client = Client.create();
@@ -106,7 +118,7 @@ public class ApiUtil {
 
     public static void main(String args[]){
         long millis = System.currentTimeMillis();
-        JSONObject steps = getBicyclingStepsByGoogleMap(40.8171321, -73.996854, 40.7516627, -75.0725247);
+        JSONObject steps = getInstant().getBicyclingStepsByGoogleMap(40.8171321, -73.996854, 40.7516627, -75.0725247);
         System.out.println("耗时：" + (System.currentTimeMillis() - millis));
         System.out.println(steps);
     }

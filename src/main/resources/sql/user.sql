@@ -8,3 +8,5 @@ create table user (
   create_time DATE,
   update_time DATE
 )CHARSET=utf8;
+
+CREATE INDEX IDX_ACCOUNT ON user(account);

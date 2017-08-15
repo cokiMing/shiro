@@ -34,6 +34,7 @@
   <filter-mapping>
     <filter-name>shiroFilter</filter-name>
     <url-pattern>*.json</url-pattern>
+    <url-pattern>/user/*</url-pattern>
   </filter-mapping>
 
   <!-- spring容器 -->

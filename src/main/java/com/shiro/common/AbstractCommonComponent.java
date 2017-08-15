@@ -1,12 +1,12 @@
-package com.shiro.controller;
+package com.shiro.common;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Controller公用组件放到这里
- * Created by wuyiming on 2017/8/10.
+ * 存放Common包中的公共组件
+ * Created by wuyiming on 2017/8/15.
  */
-public abstract class AbstractController {
+public abstract class AbstractCommonComponent {
     protected Log log = LogFactory.getLog(this.getClass());
 }
