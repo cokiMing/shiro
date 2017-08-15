@@ -19,19 +19,13 @@ import java.util.List;
  * 第三方提供的接口
  * Created by wuyiming on 2017/8/9.
  */
-@Component
+@Component()
 public class ApiUtil {
 
     private final static String GOOGLEMAP_API_KEY = "AIzaSyCB64p-Gctfzvp1TRb4lMQCebu1FQPHhNI";
 
-    private static ApiUtil apiUtil = new ApiUtil();
-
-    public synchronized static ApiUtil getInstant(){
-        return apiUtil;
-    }
-
-    public String ApiUtilTest(){
-        return "test ok!";
+    public String apiUtilTest(){
+        return "apiUtil is ok";
     }
 
     /**
@@ -118,7 +112,8 @@ public class ApiUtil {
 
     public static void main(String args[]){
         long millis = System.currentTimeMillis();
-        JSONObject steps = getInstant().getBicyclingStepsByGoogleMap(40.8171321, -73.996854, 40.7516627, -75.0725247);
+        ApiUtil apiUtil = new ApiUtil();
+        JSONObject steps = apiUtil.getBicyclingStepsByGoogleMap(40.8171321, -73.996854, 40.7516627, -75.0725247);
         System.out.println("耗时：" + (System.currentTimeMillis() - millis));
         System.out.println(steps);
     }

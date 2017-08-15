@@ -20,7 +20,7 @@ public class TestController extends AbstractController{
 //    @Autowired
 //    private ItemPublisher itemPublisher;
 
-    @Autowired
+    @Autowired()
     private ApiUtil apiUtil;
 
     /**
@@ -63,7 +63,7 @@ public class TestController extends AbstractController{
 //        if (mode.equals(Constant.MODE_DRIVING)){
 //            result = apiUtil.getDrivingStepsByGoogleMap(olat, olng, dlat, dlng);
 //        }
-        String msg = apiUtil.ApiUtilTest();
+        String msg = apiUtil.apiUtilTest();
         if (result != null){
             return Result.success(result);
         }

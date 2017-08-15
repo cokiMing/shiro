@@ -1,6 +1,7 @@
 package com.shiro.common.aspect;
 
 import com.shiro.common.AbstractCommonComponent;
+import com.shiro.common.pojo.Result;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
@@ -32,7 +33,7 @@ public class RemoteAspect extends AbstractCommonComponent{
     }
 
     @Around("Controller()")
-    public void aroundMethod(ProceedingJoinPoint point){
+    public Object aroundMethod(ProceedingJoinPoint point){
         Signature sig = point.getSignature();
         MethodSignature msig;
         if (!(sig instanceof MethodSignature)) {
@@ -40,12 +41,16 @@ public class RemoteAspect extends AbstractCommonComponent{
         }
         msig = (MethodSignature) sig;
         Object target = point.getTarget();
+        Object result;
         try{
             Method currentMethod = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
-            point.proceed();
+            result = point.proceed();
             log.info("method " + currentMethod.getName() + " execute");
         }catch (Throwable e){
-            log.error("获取方法名失败");
+            log.error(e.getMessage());
+            return Result.fail("系统异常");
         }
+
+        return result;
     }
 }
