@@ -68,4 +68,29 @@
             </if>
         </trim>
     </insert>
+
+    <update id="updateUser" parameterType="com.shiro.entity.DO.UserDO">
+        UPDATE user SET
+        <trim suffixOverrides="," >
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tel != null">
+                tel = #{tel,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        WHERE id = #{id,jdbcType=VARCHAR}
+    </update>
 </mapper>

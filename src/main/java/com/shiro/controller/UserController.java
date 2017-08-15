@@ -30,9 +30,12 @@ public class UserController extends AbstractController{
      * @return
      */
     @RequestMapping(value="/new",method= RequestMethod.POST)
-    public JSONObject saveUserInfo(@Valid @RequestBody UserDTO userDTO){
+    public Result saveUserInfo(@Valid @RequestBody UserDTO userDTO){
         if (userDTO == null){
             return Result.fail("用户信息为空");
+        }
+        if(userDTO.getTel() == null){
+            return Result.fail("手机号为空");
         }
         return userService.saveUserInfo(userDTO);
     }
@@ -43,7 +46,7 @@ public class UserController extends AbstractController{
      * @return
      */
     @RequestMapping(value="/{id}",method=RequestMethod.GET)
-    public JSONObject getUserInfo(@PathVariable String id){
+    public Result getUserInfo(@PathVariable String id){
         if (StringUtils.isBlank(id)){
             return Result.fail("id为空");
         }
@@ -56,7 +59,7 @@ public class UserController extends AbstractController{
      * @return
      */
     @RequestMapping(value="/{id}/detail",method=RequestMethod.GET)
-    public JSONObject getUserInfoDetail(@PathVariable String id){
+    public Result getUserInfoDetail(@PathVariable String id){
         if (StringUtils.isBlank(id)){
             return Result.fail("id为空");
         }
@@ -69,10 +72,11 @@ public class UserController extends AbstractController{
      * @return
      */
     @RequestMapping(value="/{id}",method=RequestMethod.PUT)
-    public JSONObject updateUserInfo(@PathVariable String id){
+    public Result updateUserInfo(@PathVariable String id,
+                                 @RequestBody UserDTO userDTO){
         if (StringUtils.isBlank(id)){
             return Result.fail("id为空");
         }
-        return null;
+        return userService.updateUserInfo(userDTO,id);
     }
 }

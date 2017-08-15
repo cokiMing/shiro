@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserMapper {
+
     UserDO getUserById(String id);
 
     int insertUser(UserDO userDO);
 
     UserDO getUserByAccount(String account);
+
+    int updateUser(UserDO userDO);
 }

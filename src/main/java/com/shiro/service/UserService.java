@@ -72,6 +72,35 @@ public class UserService {
     }
 
     /**
+     * 根据id更新账号信息
+     * @param userDTO
+     * @param id
+     * @return
+     */
+    public Result updateUserInfo(UserDTO userDTO,String id){
+        UserDO origin = userMapper.getUserById(id);
+        if (origin == null){
+            return Result.fail("没有找到对象");
+        }
+
+        String password = Md5Util.string2MD5(userDTO.getPassword());
+        UserDO userDO = EntityUtil.castToObject(userDTO,UserDO.class);
+        userDO.setId(id);
+        userDO.setUpdateTime(new Date());
+        userDO.setPassword(password);
+        userDO.setAccount(null);
+
+        try{
+            userMapper.updateUser(userDO);
+        }catch (Exception e){
+            return Result.error(e.getMessage());
+        }
+
+        return Result.success();
+
+    }
+
+    /**
      * 新增用户
      * @param userDTO
      * @return
