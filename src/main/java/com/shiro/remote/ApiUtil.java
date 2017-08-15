@@ -3,6 +3,7 @@ package com.shiro.remote;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shiro.common.AbstractCommonComponent;
 import com.shiro.common.constant.Constant;
 import com.shiro.common.util.NumUtil;
 import com.sun.jersey.api.client.Client;
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by wuyiming on 2017/8/9.
  */
 @Component()
-public class ApiUtil {
+public class ApiUtil extends AbstractCommonComponent{
 
     private final static String GOOGLEMAP_API_KEY = "AIzaSyCB64p-Gctfzvp1TRb4lMQCebu1FQPHhNI";
 
@@ -67,6 +68,7 @@ public class ApiUtil {
 
         try{
             Client client = Client.create();
+            client.setConnectTimeout(5000);
             WebResource webResource = client.resource("https://maps.googleapis.com/maps/api/directions/json?" +
                     "origin=" + origin +
                     "&destination=" + destination +
@@ -105,7 +107,7 @@ public class ApiUtil {
             }
             return null;
         }catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }

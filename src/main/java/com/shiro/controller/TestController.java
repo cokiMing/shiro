@@ -20,7 +20,7 @@ public class TestController extends AbstractController{
 //    @Autowired
 //    private ItemPublisher itemPublisher;
 
-    @Autowired()
+    @Autowired
     private ApiUtil apiUtil;
 
     /**
@@ -57,16 +57,15 @@ public class TestController extends AbstractController{
         Double dlng = Double.parseDouble(destinations[1]);
 
         JSONObject result = null;
-//        if (mode.equals(Constant.MODE_BICYCLING)){
-//            result = apiUtil.getBicyclingStepsByGoogleMap(olat, olng, dlat, dlng);
-//        }
-//        if (mode.equals(Constant.MODE_DRIVING)){
-//            result = apiUtil.getDrivingStepsByGoogleMap(olat, olng, dlat, dlng);
-//        }
-        String msg = apiUtil.apiUtilTest();
+        if (mode.equals(Constant.MODE_BICYCLING)){
+            result = apiUtil.getBicyclingStepsByGoogleMap(olat, olng, dlat, dlng);
+        }
+        if (mode.equals(Constant.MODE_DRIVING)){
+            result = apiUtil.getDrivingStepsByGoogleMap(olat, olng, dlat, dlng);
+        }
         if (result != null){
             return Result.success(result);
         }
-        return Result.fail(msg);
+        return Result.fail("获取失败");
     }
 }

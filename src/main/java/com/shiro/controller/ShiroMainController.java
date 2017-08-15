@@ -22,7 +22,7 @@ public class ShiroMainController extends AbstractController{
      * @return
      */
     @RequestMapping(value="/checkLogin.json",method= RequestMethod.POST)
-    public JSONObject checkLogin(@RequestBody JSONObject requestObject,
+    public Result checkLogin(@RequestBody JSONObject requestObject,
                                  HttpServletResponse response) {
         String account = requestObject.getString("account");
         String password = requestObject.getString("password");
@@ -51,11 +51,22 @@ public class ShiroMainController extends AbstractController{
      * 退出登录
      */
     @RequestMapping(value="/logout.json",method=RequestMethod.POST)
-    public JSONObject logout() {
+    public Result logout() {
         JSONObject result = new JSONObject();
         result.put("success", true);
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
         return Result.success();
+    }
+
+    /**
+     * 无权限时的定向
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/loginDirect.json",method = RequestMethod.GET)
+    public Result loginDirect(HttpServletResponse response){
+        response.setStatus(401);
+        return Result.fail("请登录");
     }
 }

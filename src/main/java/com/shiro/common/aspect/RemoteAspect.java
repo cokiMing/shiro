@@ -1,7 +1,6 @@
 package com.shiro.common.aspect;
 
 import com.shiro.common.AbstractCommonComponent;
-import com.shiro.common.pojo.Result;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
@@ -18,21 +17,21 @@ import java.lang.reflect.Method;
 public class RemoteAspect extends AbstractCommonComponent{
 
     @Pointcut("execution(public * com.shiro.remote.ApiUtil.*(..))")
-    public void Controller(){
+    public void Remote(){
         //此方法仅仅是一个标记,不会被执行
     }
 
-    @Before("Controller()")
+    @Before("Remote()")
     public void printDemoBefore(){
         log.info( "aspectDemo test before");
     }
 
-    @After("Controller()")
+    @After("Remote()")
     public void printDemoAfter(){
         log.info("aspectDemo test after");
     }
 
-    @Around("Controller()")
+    @Around("Remote()")
     public Object aroundMethod(ProceedingJoinPoint point){
         Signature sig = point.getSignature();
         MethodSignature msig;
@@ -48,7 +47,7 @@ public class RemoteAspect extends AbstractCommonComponent{
             log.info("method " + currentMethod.getName() + " execute");
         }catch (Throwable e){
             log.error(e.getMessage());
-            return Result.fail("系统异常");
+            return null;
         }
 
         return result;

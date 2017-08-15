@@ -30,7 +30,7 @@
     <!-- Shiro Filter -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager" />
-        <property name="loginUrl" value="/index.jsp" />
+        <property name="loginUrl" value="/loginDirect.json" />
         <property name="successUrl" value="/loginsuccess.jhtml" />
         <property name="unauthorizedUrl" value="/error.jhtml" />
         <property name="filterChainDefinitions">
