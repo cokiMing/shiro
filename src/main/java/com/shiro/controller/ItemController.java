@@ -6,6 +6,8 @@ import com.shiro.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * Created by wuyiming on 2017/8/4.
  */
@@ -17,7 +19,7 @@ public class ItemController extends AbstractController{
     private ItemService itemService;
 
     @RequestMapping(value = "/new",method = RequestMethod.POST)
-    public Result saveItem(@RequestBody ItemDTO itemDTO){
+    public Result saveItem(@RequestBody @Valid ItemDTO itemDTO){
         if (itemDTO == null){
             return Result.fail("参数为空");
         }

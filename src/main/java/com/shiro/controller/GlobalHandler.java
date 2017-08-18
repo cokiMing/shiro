@@ -6,6 +6,7 @@ import com.shiro.common.pojo.Result;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +38,7 @@ public class GlobalHandler {
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public JSONObject processMethod(Exception ex, HttpServletRequest request , HttpServletResponse response)throws IOException{
+    public JSONObject processMethod(Exception ex, HttpServletRequest request, HttpServletResponse response)throws IOException{
         String msg = "请求路径：" + request.getRequestURI()
                 + (request.getQueryString() == null ? "" : request.getQueryString()) + "，参数:"
                 + JSON.toJSONString(request.getParameterMap());
@@ -46,6 +47,27 @@ public class GlobalHandler {
 
         response.setStatus(500);
         return Result.error(ex.getMessage());
+    }
+
+    /**
+     * 请求参数错误处理
+     * @param ex
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public JSONObject invalidArgHandler(Exception ex, HttpServletRequest request, HttpServletResponse response)throws IOException{
+        String msg = "请求路径：" + request.getRequestURI()
+                + (request.getQueryString() == null ? "" : request.getQueryString()) + "，参数:"
+                + JSON.toJSONString(request.getParameterMap());
+        log.error("参数丢失："+ex.getMessage());
+        log.error(msg);
+
+        response.setStatus(400);
+        return Result.fail("参数错误");
     }
 
     /**

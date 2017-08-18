@@ -5,7 +5,6 @@ import com.shiro.common.util.EntityUtil;
 import com.shiro.common.util.Md5Util;
 import com.shiro.common.util.UserIdUtils;
 import com.shiro.dao.db.user.UserMapper;
-import com.shiro.entity.BO.BaseUser;
 import com.shiro.entity.DO.UserDO;
 import com.shiro.entity.DTO.UserDTO;
 import com.shiro.entity.VO.UserVO;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Date;
 
@@ -77,6 +75,7 @@ public class UserService {
      * @param id
      * @return
      */
+    @Transactional
     public Result updateUserInfo(UserDTO userDTO,String id){
         UserDO origin = userMapper.getUserById(id);
         if (origin == null){
@@ -97,7 +96,6 @@ public class UserService {
         }
 
         return Result.success();
-
     }
 
     /**

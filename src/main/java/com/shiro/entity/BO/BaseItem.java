@@ -1,15 +1,21 @@
 package com.shiro.entity.BO;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
  * Created by wuyiming on 2017/8/4.
  */
 public class BaseItem {
+    @NotNull
     private String name;
+    @NotNull
     private String enName;
     private String description;
     private String type;
+    @NotEmpty
     private Set<String> itemPool;
     private String version;
 
