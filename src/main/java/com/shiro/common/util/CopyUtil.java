@@ -1,6 +1,8 @@
 package com.shiro.common.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shiro.common.exception.InvalidParamException;
+import com.shiro.entity.DO.UserDO;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -24,7 +26,7 @@ public class CopyUtil {
 
     /**
      * 将指定参数拷贝到一个JSONObject类的对象中
-     * <warn>浅拷贝</warn>
+     * <notice>浅拷贝</notice>
      * @param t 待拷贝的对象
      * @param paramSet 指定参数集合
      * @return
@@ -35,7 +37,7 @@ public class CopyUtil {
 
     /**
      * 将指定参数以外的参数拷贝到一个JSONObject类的对象中
-     * <warn>浅拷贝</warn>
+     * <notice>浅拷贝</notice>
      * @param t 待拷贝的对象
      * @param paramSet 排除参数集合
      * @return
@@ -46,22 +48,60 @@ public class CopyUtil {
 
     /**
      * 从一个JSONObject类中拷贝指定参数至实体类中
-     * <warn>浅拷贝</warn>
+     * <notice>浅拷贝</notice>
      * @param paramSet 指定参数集合
      * @return
      */
-    public static <T> T reverseCopyReferParam(JSONObject jsonObject, Class<T> clazz, Set<String> paramSet){
-        return reverseCopy(jsonObject,clazz,paramSet,MODE_PART);
+    public static <T> T copyReferParamFromJSON(JSONObject jsonObject, Class<T> clazz, Set<String> paramSet){
+        try{
+            return reverseCopy(jsonObject,clazz,paramSet,MODE_PART,false);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 从一个JSONObject类中拷贝指定参数外的参数至实体类中
-     * <warn>浅拷贝</warn>
+     * <notice>浅拷贝</notice>
      * @param paramSet 排除参数集合
      * @return
      */
-    public static <T> T reverseCopyExcludeParam(JSONObject jsonObject, Class<T> clazz, Set<String> paramSet){
-        return reverseCopy(jsonObject,clazz,paramSet,MODE_EXCLUDE);
+    public static <T> T copyExcludeParamFromJSON(JSONObject jsonObject, Class<T> clazz, Set<String> paramSet){
+        try {
+            return reverseCopy(jsonObject,clazz,paramSet,MODE_EXCLUDE,false);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从一个JSONObject类中拷贝指定参数至实体类中
+     * <notice>出现空参会抛出异常<notice/>
+     * <notice>浅拷贝</notice>
+     * @exception InvalidParamException
+     * <warn>浅拷贝</warn>
+     * @param <T>
+     * @return
+     */
+    public static <T> T copyReferParamWithValid(JSONObject jsonObject,
+                                               Class<T> clazz,
+                                               Set<String> paramSet) throws InvalidParamException {
+        return reverseCopy(jsonObject,clazz,paramSet,MODE_PART,true);
+    }
+
+    /**
+     * 从一个JSONObject类中拷贝指定参数外的参数至实体类中
+     * <notice>出现空参会抛出异常<notice/>
+     * <notice>浅拷贝</notice>
+     * @exception InvalidParamException
+     * <warn>浅拷贝</warn>
+     * @param <T>
+     * @return
+     */
+    public static <T> T copyExcludeParamWithValid(JSONObject jsonObject,
+                                                 Class<T> clazz,
+                                                 Set<String> paramSet) throws InvalidParamException {
+        return reverseCopy(jsonObject,clazz,paramSet,MODE_EXCLUDE,true);
     }
 
     /**
@@ -153,7 +193,11 @@ public class CopyUtil {
         return result;
     }
 
-    private static <T> T reverseCopy(JSONObject jsonObject, Class<T> clazz, Set<String> paramSet, int mode){
+    private static <T> T reverseCopy(JSONObject jsonObject,
+                                     Class<T> clazz,
+                                     Set<String> paramSet,
+                                     int mode,
+                                     boolean valid)throws InvalidParamException{
         paramSet = paramSet == null?new HashSet<String>():paramSet;
         T t;
         try{
@@ -168,10 +212,12 @@ public class CopyUtil {
             if (methodName.startsWith("set")){
                 String param = getParamName(methodName);
                 if (mode == MODE_PART && paramSet.contains(param)){
-                    putParamFromJson(method,t,jsonObject,param);
+                   if (valid) putParamFromJsonWithValidation(method,t,jsonObject,param);
+                   else putParamFromJson(method,t,jsonObject,param);
                 }
                 if (mode == MODE_EXCLUDE && !paramSet.contains(param)){
-                    putParamFromJson(method,t,jsonObject,param);
+                    if (valid) putParamFromJsonWithValidation(method,t,jsonObject,param);
+                    else putParamFromJson(method,t,jsonObject,param);
                 }
             }
         }
@@ -190,9 +236,7 @@ public class CopyUtil {
         Method[] declaredMethods = clazz.getDeclaredMethods();
         methods.addAll(Arrays.asList(declaredMethods));
         String superName = clazz.getSuperclass().getName();
-        if (!superName.startsWith("java")){
-            methods.addAll(getMethods(clazz.getSuperclass()));
-        }
+        if (!superName.startsWith("java")) methods.addAll(getMethods(clazz.getSuperclass()));
 
         return methods;
     }
@@ -200,9 +244,7 @@ public class CopyUtil {
     private static void putParamToJson(Method method, Object object, JSONObject jsonObject, String param){
         try{
             Object invoke = method.invoke(object);
-            if (invoke != null){
-                jsonObject.put(param,invoke);
-            }
+            if (invoke != null) jsonObject.put(param,invoke);
         }catch (Exception e){
             throw new RuntimeException("get method invalid!");
         }
@@ -211,11 +253,41 @@ public class CopyUtil {
     private static void putParamFromJson(Method method, Object object, JSONObject jsonObject, String param){
         try{
             Object o = jsonObject.get(param);
-            if (o != null){
-                method.invoke(object,o);
-            }
+            if (o != null) method.invoke(object,o);
         }catch (Exception e){
             throw new RuntimeException("set method invalid!");
+        }
+    }
+
+    private static void putParamFromJsonWithValidation(Method method,
+                                                       Object object,
+                                                       JSONObject jsonObject,
+                                                       String param)throws InvalidParamException{
+        try{
+            Object o = jsonObject.get(param);
+            if (o != null) method.invoke(object,o);
+            else throw new Exception();
+        }catch (Exception e){
+            throw new InvalidParamException(param);
+        }
+    }
+
+    public static void main(String[] args){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id","12345678");
+        jsonObject.put("password","134gdsdfsdf");
+        jsonObject.put("tel","19283298412");
+        jsonObject.put("name","asd");
+
+        Set<String> set = new HashSet<>();
+        set.add("tel");
+        try{
+            long millis = System.currentTimeMillis();
+            UserDO userDO = copyExcludeParamFromJSON(jsonObject, UserDO.class, set);
+            System.out.println("耗时：" + (System.currentTimeMillis() - millis));
+            System.out.println(userDO);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
     }
 }
