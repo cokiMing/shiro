@@ -78,8 +78,8 @@
             <if test="account != null">
                 account = #{account,jdbcType=VARCHAR},
             </if>
-            <if test="password != null">
-                password = #{password,jdbcType=VARCHAR},
+            <if test="description != null">
+                password = #{description,jdbcType=VARCHAR},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -92,5 +92,9 @@
             </if>
         </trim>
         WHERE id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="addCommodityNum" parameterType="map">
+
     </update>
 </mapper>

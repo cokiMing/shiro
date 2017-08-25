@@ -85,7 +85,7 @@ public class CopyUtil {
      */
     public static <T> T copyReferParamWithValid(JSONObject jsonObject,
                                                Class<T> clazz,
-                                               Set<String> paramSet) throws InvalidParamException {
+                                               Set<String> paramSet) {
         return reverseCopy(jsonObject,clazz,paramSet,MODE_PART,true);
     }
 
@@ -100,7 +100,7 @@ public class CopyUtil {
      */
     public static <T> T copyExcludeParamWithValid(JSONObject jsonObject,
                                                  Class<T> clazz,
-                                                 Set<String> paramSet) throws InvalidParamException {
+                                                 Set<String> paramSet) {
         return reverseCopy(jsonObject,clazz,paramSet,MODE_EXCLUDE,true);
     }
 
@@ -197,7 +197,7 @@ public class CopyUtil {
                                      Class<T> clazz,
                                      Set<String> paramSet,
                                      int mode,
-                                     boolean valid)throws InvalidParamException{
+                                     boolean valid){
         paramSet = paramSet == null?new HashSet<String>():paramSet;
         T t;
         try{
@@ -262,7 +262,7 @@ public class CopyUtil {
     private static void putParamFromJsonWithValidation(Method method,
                                                        Object object,
                                                        JSONObject jsonObject,
-                                                       String param)throws InvalidParamException{
+                                                       String param){
         try{
             Object o = jsonObject.get(param);
             if (o != null) method.invoke(object,o);

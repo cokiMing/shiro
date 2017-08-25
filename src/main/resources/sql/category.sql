@@ -1,0 +1,7 @@
+CREATE TABLE category(
+  category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  create_time TIMESTAMP,
+  update_time TIMESTAMP,
+  status VARCHAR(10) DEFAULT 'USE',
+  name VARCHAR(10) NOT NULL
+)CHARSET=utf8

@@ -3,7 +3,7 @@ package com.shiro.common.constant;
 /**
  * Created by wuyiming on 2017/8/2.
  */
-public class Constant {
+public class CommonParam {
     /**
      * 道具类别
      */
@@ -30,4 +30,15 @@ public class Constant {
     public final static String MODE_DRIVING = "driving";
     public final static String MODE_WALKING = "walking";
     public final static String MODE_BICYCLING = "bicycling";
+    /**
+     * 商品状态
+     */
+    public final static String COMMODITY_ONSALE = "ON_SALE";
+    public final static String COMMODITY_OFFSALE = "OFF_SALE";
+    public final static String COMMODITY_DELETE = "DELETE";
+    /**
+     * 通用状态
+     */
+    public final static String COMMON_USE = "USE";
+    public final static String COMMON_DELETE = "DELETE";
 }

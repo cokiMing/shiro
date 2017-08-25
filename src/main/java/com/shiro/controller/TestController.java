@@ -1,12 +1,16 @@
 package com.shiro.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shiro.common.constant.Constant;
+import com.shiro.common.constant.CommonParam;
 import com.shiro.common.pojo.Result;
-import com.shiro.mq.ItemPublisher;
+import com.shiro.common.util.QiniuUtil;
 import com.shiro.remote.ApiUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 测试Controller
@@ -57,15 +61,35 @@ public class TestController extends AbstractController{
         Double dlng = Double.parseDouble(destinations[1]);
 
         JSONObject result = null;
-        if (mode.equals(Constant.MODE_BICYCLING)){
+        if (mode.equals(CommonParam.MODE_BICYCLING)){
             result = apiUtil.getBicyclingStepsByGoogleMap(olat, olng, dlat, dlng);
         }
-        if (mode.equals(Constant.MODE_DRIVING)){
+        if (mode.equals(CommonParam.MODE_DRIVING)){
             result = apiUtil.getDrivingStepsByGoogleMap(olat, olng, dlat, dlng);
         }
         if (result != null){
             return Result.success(result);
         }
         return Result.fail("获取失败");
+    }
+
+    /**
+     * 七牛文件上传接口
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "/file/upload",method = RequestMethod.POST)
+    public Result uploadPic(@RequestParam("pic") CommonsMultipartFile file)throws IOException{
+        InputStream inputStream = file.getInputStream();
+        String fileKey = apiUtil.uploadFileByInputstream(inputStream);
+        log.debug(fileKey);
+        if (fileKey == null){
+            return Result.fail("上传失败");
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pic",fileKey);
+        jsonObject.put("url", QiniuUtil.getFileURL(fileKey));
+        return Result.success(jsonObject);
     }
 }

@@ -5,12 +5,18 @@ import org.apache.commons.codec.binary.Base64;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-public class UserIdUtils {
+public class KeyUtils {
     
     public static String uuid() {
         UUID uuid = UUID.randomUUID();
         String s = uuidToBase64(uuid.toString());
         return "user"+s;
+    }
+
+    public static String commodityId(){
+        UUID uuid = UUID.randomUUID();
+        String s = uuidToBase64(uuid.toString());
+        return "cdi"+s;
     }
 
     private static String uuidToBase64(String str) {

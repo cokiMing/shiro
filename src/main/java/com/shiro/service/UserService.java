@@ -3,7 +3,7 @@ package com.shiro.service;
 import com.shiro.common.pojo.Result;
 import com.shiro.common.util.EntityUtil;
 import com.shiro.common.util.Md5Util;
-import com.shiro.common.util.UserIdUtils;
+import com.shiro.common.util.KeyUtils;
 import com.shiro.dao.db.user.UserMapper;
 import com.shiro.entity.DO.UserDO;
 import com.shiro.entity.DTO.UserDTO;
@@ -106,7 +106,7 @@ public class UserService {
     @Transactional
     public Result saveUserInfo(UserDTO userDTO){
         Date date = new Date();
-        String id = UserIdUtils.uuid();
+        String id = KeyUtils.uuid();
         String password = Md5Util.string2MD5(userDTO.getPassword());
 
         UserDO userDO = EntityUtil.castToObject(userDTO,UserDO.class);

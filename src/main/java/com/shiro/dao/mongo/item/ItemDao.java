@@ -1,6 +1,5 @@
 package com.shiro.dao.mongo.item;
 
-import com.shiro.common.constant.Constant;
 import com.shiro.common.util.EntityUtil;
 import com.shiro.dao.mongo.AbstractMongoTemplate;
 import com.shiro.dao.redis.RedisDao;
@@ -9,8 +8,6 @@ import com.shiro.entity.DTO.ItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;

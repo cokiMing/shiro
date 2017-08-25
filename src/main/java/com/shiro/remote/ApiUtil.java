@@ -3,15 +3,25 @@ package com.shiro.remote;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
 import com.shiro.common.AbstractCommonComponent;
-import com.shiro.common.constant.Constant;
+import com.shiro.common.constant.AuthParam;
+import com.shiro.common.constant.CommonParam;
+import com.shiro.common.util.KeyUtils;
 import com.shiro.common.util.NumUtil;
+import com.shiro.common.util.QiniuUtil;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.MediaType;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +48,7 @@ public class ApiUtil extends AbstractCommonComponent{
      * @return
      */
     public JSONObject getDrivingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
-        return getStepsByGoogleMap(originLat,originLng,desLat,desLng, Constant.MODE_DRIVING);
+        return getStepsByGoogleMap(originLat,originLng,desLat,desLng, CommonParam.MODE_DRIVING);
     }
 
     /**
@@ -50,7 +60,40 @@ public class ApiUtil extends AbstractCommonComponent{
      * @return
      */
     public JSONObject getBicyclingStepsByGoogleMap(Double originLat,Double originLng,Double desLat,Double desLng){
-        return getStepsByGoogleMap(originLat,originLng,desLat,desLng, Constant.MODE_BICYCLING);
+        return getStepsByGoogleMap(originLat,originLng,desLat,desLng, CommonParam.MODE_BICYCLING);
+    }
+
+    /**
+     * 上传文件至七牛
+     * @param inputStream
+     * @return
+     */
+    public String uploadFileByInputstream(InputStream inputStream){
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        String key = null;
+        try {
+            String upToken = QiniuUtil.getUploadToken(AuthParam.BUCKET);
+            UploadManager uploadManager = QiniuUtil.createUploadManager();
+            try {
+                Response response = uploadManager.put(inputStream,key,upToken,null, null);
+                //解析上传成功的结果
+                DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+                log.debug(putRet.key);
+                log.debug(putRet.hash);
+                return putRet.key;
+            } catch (QiniuException ex) {
+                Response r = ex.response;
+                System.err.println(r.toString());
+                try {
+                    System.err.println(r.bodyString());
+                } catch (QiniuException ex2) {
+                    //ignore
+                }
+            }
+        } catch (Exception ex) {
+            //ignore
+        }
+        return null;
     }
 
     /**

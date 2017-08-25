@@ -8,6 +8,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by wuyiming on 2017/8/15.
@@ -32,7 +33,7 @@ public class RemoteAspect extends AbstractCommonComponent{
     }
 
     @Around("Remote()")
-    public Object aroundMethod(ProceedingJoinPoint point){
+    public Object aroundMethod(ProceedingJoinPoint point)throws Exception{
         Signature sig = point.getSignature();
         MethodSignature msig;
         if (!(sig instanceof MethodSignature)) {
@@ -44,10 +45,10 @@ public class RemoteAspect extends AbstractCommonComponent{
         try{
             Method currentMethod = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
             result = point.proceed();
-            log.info("method " + currentMethod.getName() + " execute");
+            log.info("method " + currentMethod.getName() + " executed");
         }catch (Throwable e){
             log.error(e.getMessage());
-            return null;
+            throw new Exception(e);
         }
 
         return result;

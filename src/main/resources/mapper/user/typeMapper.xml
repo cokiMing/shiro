@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiro.dao.db.type.TypeMapper">
+    <!-- 根据id查询得到一个Commodity对象 -->
+    <select id="getTypeById" parameterType="string" resultType="com.shiro.entity.DO.Type">
+        select * from type where type_id=#{typeId}
+    </select>
+
+    <!-- 根据category查询得到所有Commodity对象 -->
+    <select id="getTypeByCategory" parameterType="string" resultType="com.shiro.entity.DO.Type">
+        select * from type where category_id=#{categoryId}
+    </select>
+
+    <!-- 获取所有Commodity对象 -->
+    <select id="getAllType" resultType="com.shiro.entity.DO.Type">
+        select * from type
+    </select>
+
+    <!-- 新增Commodity对象 -->
+    <insert id="insertType" parameterType="com.shiro.entity.DO.Type">
+        INSERT INTO type
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateTypeById" parameterType="com.shiro.entity.DO.Type">
+        UPDATE type SET
+        <trim suffixOverrides="," >
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+        WHERE type_id = #{typeId,jdbcType=VARCHAR}
+        AND status != 'DELETE'
+    </update>
+
+</mapper>
