@@ -39,4 +39,11 @@ public class ItemDao extends AbstractMongoTemplate {
         query.addCriteria(criteria);
         return mongoTemplate.findOne(query,ItemDO.class,COLLECTION_NAME);
     }
+
+    public ItemDO getById(String id){
+        Query query = new Query();
+        Criteria criteria = Criteria.where("id").is(id);
+        query.addCriteria(criteria);
+        return mongoTemplate.findOne(query,ItemDO.class,COLLECTION_NAME);
+    }
 }

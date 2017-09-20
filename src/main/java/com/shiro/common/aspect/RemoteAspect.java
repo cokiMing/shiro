@@ -1,6 +1,7 @@
 package com.shiro.common.aspect;
 
 import com.shiro.common.AbstractCommonComponent;
+import com.shiro.common.annotation.MyAnnotation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
@@ -20,6 +21,10 @@ public class RemoteAspect extends AbstractCommonComponent{
     @Pointcut("execution(public * com.shiro.remote.ApiUtil.*(..))")
     public void Remote(){
         //此方法仅仅是一个标记,不会被执行
+    }
+
+    @Pointcut("@annotation(com.shiro.common.annotation.MyAnnotation)")
+    public void myAnnotation() {
     }
 
     @Before("Remote()")
@@ -52,5 +57,36 @@ public class RemoteAspect extends AbstractCommonComponent{
         }
 
         return result;
+    }
+
+    @Around("myAnnotation()")
+    public Object aroundAnnotation(ProceedingJoinPoint point)throws Exception{
+        Method method = getMethod(point);
+        if (method != null) {
+            MyAnnotation annotation = method.getAnnotation(MyAnnotation.class);
+            String message = annotation.message();
+            log.info("i got a message:" + message);
+        }
+        try{
+            return point.proceed();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private Method getMethod(ProceedingJoinPoint point) {
+        Signature sig = point.getSignature();
+        MethodSignature msig;
+        if (!(sig instanceof MethodSignature)) {
+            throw new IllegalArgumentException("该注解只能用于方法");
+        }
+        msig = (MethodSignature) sig;
+        Object target = point.getTarget();
+        try{
+            Method currentMethod = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
+            return currentMethod;
+        }catch (Throwable e){
+            return null;
+        }
     }
 }

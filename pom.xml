@@ -269,6 +269,25 @@
       <version>4aug2000r7-dev</version>
     </dependency>
 
+    <!-- netty -->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>5.0.0.Alpha1</version>
+    </dependency>
+
+    <!-- webSocket -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-messaging</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
     <!-- other plugins -->
     <dependency>
       <groupId>com.alibaba</groupId>
@@ -315,11 +334,6 @@
       <artifactId>aspectjweaver</artifactId>
       <version>1.6.11</version>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-    </dependency>
   </dependencies>
 
   <profiles>
@@ -342,7 +356,7 @@
     </profile>
     <!-- home环境 -->
     <profile>
-      <id>prod</id>
+      <id>home</id>
       <properties>
         <package.environment>home</package.environment>
       </properties>

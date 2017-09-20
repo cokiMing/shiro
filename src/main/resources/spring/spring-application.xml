@@ -9,8 +9,9 @@
 
     <import resource="classpath:spring/spring-application-mongodb.xml"/>
     <import resource="classpath:spring/spring-application-mysql.xml"/>
-    <import resource="classpath:spring/spring-application-quartz.xml"/>
+    <!--<import resource="classpath:spring/spring-application-quartz.xml"/>-->
     <!--<import resource="classpath:spring/spring-application-rabbitmq.xml"/>-->
+    <import resource="classpath:spring/spring-application-task.xml"/>
     <import resource="classpath:spring/spring-application-redis.xml"/>
     <import resource="classpath:spring/spring-application-service.xml"/>
     <import resource="classpath:spring/spring-application-shiro.xml"/>
@@ -18,4 +19,7 @@
 
     <context:component-scan base-package="com.shiro.common"/>
 
+    <bean id="remoteParam" class="com.shiro.common.constant.RemoteParam">
+        <property name="API_HOST"  value="${remote.host}"/>
+    </bean>
 </beans>

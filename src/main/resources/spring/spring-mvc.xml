@@ -4,6 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
        xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
                         http://www.springframework.org/schema/context
@@ -17,7 +18,9 @@
                         http://www.springframework.org/schema/aop
                         http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
                         http://www.springframework.org/schema/task
-						http://www.springframework.org/schema/task/spring-task-4.1.xsd">
+						http://www.springframework.org/schema/task/spring-task-4.1.xsd
+						http://www.springframework.org/schema/websocket
+						http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
     <!-- 注解驱动: 不添加该驱动配置将导致application/json的请求无法解析，415 -->
     <mvc:annotation-driven>
@@ -62,6 +65,16 @@
         <property name="maxInMemorySize" value="4096" />
         <property name="defaultEncoding" value="UTF-8"></property>
     </bean>
+
+    <!-- websocket -->
+    <!--<bean id="websocket" class="com.shiro.common.websocket.WebSocketEndPoint"/>-->
+
+    <!--<websocket:handlers>-->
+        <!--<websocket:mapping path="/websocket" handler="websocket"/>-->
+        <!--<websocket:handshake-interceptors>-->
+            <!--<bean class="com.shiro.common.websocket.HandshakeInterceptor"/>-->
+        <!--</websocket:handshake-interceptors>-->
+    <!--</websocket:handlers>-->
 
     <!-- interceptor -->
     <mvc:interceptors>

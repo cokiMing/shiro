@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.shiro.common.constant.CommonParam;
 import com.shiro.common.pojo.Result;
 import com.shiro.common.util.QiniuUtil;
+import com.shiro.entity.BO.Man;
 import com.shiro.remote.ApiUtil;
+import com.shiro.service.ManService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -26,6 +28,9 @@ public class TestController extends AbstractController{
 
     @Autowired
     private ApiUtil apiUtil;
+
+    @Autowired
+    private ManService manService;
 
     /**
      * 消息队列发送测试接口
@@ -71,6 +76,36 @@ public class TestController extends AbstractController{
             return Result.success(result);
         }
         return Result.fail("获取失败");
+    }
+
+    @RequestMapping(value = "/man/new",method = RequestMethod.POST)
+    public Result saveMan(@RequestBody Man man) {
+        return manService.insertMan(man);
+    }
+
+    @RequestMapping(value = "/man/search",method = RequestMethod.POST)
+    public Result saveMan(@RequestBody JSONObject jsonObject) {
+        return manService.findByModel(jsonObject);
+    }
+
+    @RequestMapping(value = "/man/{id}",method = RequestMethod.GET)
+    public Result getManById(@PathVariable("id") String id) {
+        return manService.findById(id);
+    }
+
+    @RequestMapping(value = "/man/{id}",method = RequestMethod.DELETE)
+    public Result deleteManById(@PathVariable("id") String id) {
+        return manService.deleteById(id);
+    }
+
+    @RequestMapping(value = "/man/update",method = RequestMethod.PUT)
+    public Result updateManById(@RequestBody Man man) {
+        return manService.updateByPrimaryKey(man);
+    }
+
+    @RequestMapping(value = "/man/all",method = RequestMethod.GET)
+    public Result findAll() {
+        return manService.findAll();
     }
 
     /**

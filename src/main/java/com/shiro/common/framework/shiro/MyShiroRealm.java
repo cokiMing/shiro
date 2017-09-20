@@ -1,11 +1,9 @@
 package com.shiro.common.framework.shiro;
 
 import com.shiro.common.pojo.Result;
-import com.shiro.common.util.Md5Util;
 
 import com.shiro.entity.DO.UserDO;
 import com.shiro.service.UserService;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

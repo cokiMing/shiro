@@ -1,6 +1,7 @@
 package com.shiro.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shiro.common.constant.RemoteParam;
 import com.shiro.common.pojo.Result;
 import com.shiro.entity.DO.Type;
 import com.shiro.service.TypeService;
@@ -43,6 +44,7 @@ public class TypeController {
      */
     @RequestMapping(value = "/all",method = RequestMethod.GET)
     public Result getAllType(){
+        System.out.println(RemoteParam.API_HOST);
         return typeService.getAllType();
     }
 
