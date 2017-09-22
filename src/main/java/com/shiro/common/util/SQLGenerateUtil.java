@@ -1,8 +1,5 @@
 package com.shiro.common.util;
 
-import com.shiro.dao.db.man.ManMapper;
-import com.shiro.entity.BO.Man;
-
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -160,8 +157,8 @@ public class SQLGenerateUtil {
                         + " " + JDBC_SIZE_MAP.get(field.getType().getSimpleName()) + (i==fields.length-1?"":","));
             }
         }
-        String primaryKeyDefine = primaryKey + " "
-                + JDBC_SIZE_MAP.get(primaryField.getType().getSimpleName()) + "PRIMARY KEY,";
+        String primaryKeyDefine = formatCamel2DBfield(primaryKey) + " "
+                + JDBC_SIZE_MAP.get(primaryField.getType().getSimpleName()) + " PRIMARY KEY,";
 
         content.add(head);
         content.add(primaryKeyDefine);
@@ -186,12 +183,14 @@ public class SQLGenerateUtil {
         List<Field> fieldsExcludePrimaryKey = new ArrayList<>();
         Field[] fields = clazz.getDeclaredFields();
         Field primaryKeyField = null;
+        String dbPrimaryKey = formatCamel2DBfield(primaryKey);
+
         for (Field field : fields) {
-           if (field.getName().equals(primaryKey)){
-               primaryKeyField = field;
-           } else {
-               fieldsExcludePrimaryKey.add(field);
-           }
+            if (field.getName().equals(primaryKey)){
+                primaryKeyField = field;
+            } else {
+                fieldsExcludePrimaryKey.add(field);
+            }
         }
         if (primaryKeyField == null) {
             throw new NoSuchFieldException(primaryKey);
@@ -200,7 +199,7 @@ public class SQLGenerateUtil {
         String mapperTag = createMapperTag(mapperClazz.getName());
 
         String resultMap = createResultMapTag(BASE_RESULT_MAP,fullName) + "\n"
-                + createIdTag(formatCamel2DBfield(primaryKey),primaryKey,JDBC_MAP.get(primaryKeyField.getType().getSimpleName())) + "\n";
+                + createIdTag(dbPrimaryKey,primaryKey,JDBC_MAP.get(primaryKeyField.getType().getSimpleName())) + "\n";
         for (Field field: fieldsExcludePrimaryKey) {
             resultMap += createResultTag(formatCamel2DBfield(field.getName()),field.getName(),JDBC_MAP.get(field.getType().getSimpleName())) + "\n";
         }
@@ -214,19 +213,19 @@ public class SQLGenerateUtil {
 
         String selectByPrimaryKey = createSqlStatementTag(
                 SELECT, METHOD_SELECTBYPRIMARYKEY, JAVA_TYPE_STRING, null, BASE_RESULT_MAP) + "\n"
-                + "select \n"
+                + "SELECT \n"
                 + "<include refid=\"Base_Column_List\" /> \n"
-                + "from " + tableName + "\n"
-                + "where " + formatCamel2DBfield(primaryKey)
+                + "FROM " + tableName + "\n"
+                + "WHERE " + dbPrimaryKey
                 + " = " + createFieldAndType(primaryKeyField) + "\n"
                 + SELECT_SUFFIX;
 
         String selectByModel = createSqlStatementTag(
                 SELECT,METHOD_SELECTBYMODEL, JAVA_TYPE_MAP,null,BASE_RESULT_MAP) + "\n"
-                + "select \n"
+                + "SELECT \n"
                 + "<include refid=\"Base_Column_List\" /> \n"
-                + "from " + tableName + "\n"
-                + "where 1=1\n";
+                + "FROM " + tableName + "\n"
+                + "WHERE 1=1\n";
         for (Field field : fieldsExcludePrimaryKey) {
             selectByModel += createIfAndTag(field);
         }
@@ -234,31 +233,31 @@ public class SQLGenerateUtil {
 
         String findAll = createSqlStatementTag(
                 SELECT,METHOD_FINDALL,null,null,BASE_RESULT_MAP) + "\n"
-                + "select \n"
+                + "SELECT \n"
                 + "<include refid=\"Base_Column_List\" /> \n"
-                + "from " + tableName + "\n"
+                + "FROM " + tableName + "\n"
                 +SELECT_SUFFIX;
 
         String deleteByPrimaryKey = createSqlStatementTag(
                 DELETE,METHOD_DELETEBYPRIMARYKEY, JAVA_TYPE_STRING,null,null) + "\n"
-                + "delete from " + tableName + "\n"
-                + "where " + formatCamel2DBfield(primaryKey)
+                + "DELETE FROM " + tableName + "\n"
+                + "WHERE " + dbPrimaryKey
                 + " = " + createFieldAndType(primaryKeyField) + "\n"
                 + DELETE_SUFFIX;
 
         String deleteAll = createSqlStatementTag(
                 DELETE,METHOD_DELETEALL,null,null,null) + "\n"
-                + "delete from " + tableName + "\n"
+                + "DELETE FROM " + tableName + "\n"
                 + DELETE_SUFFIX;
 
         String insert = createSqlStatementTag(
                 INSERT,METHOD_INSERT, fullName,null,null) + "\n"
-                + "insert into " + tableName + "\n(";
+                + "INSERT INTO " + tableName + "\n(";
         for (Field field : fields) {
             insert += formatCamel2DBfield(field.getName()) + ",";
         }
         insert = insert.substring(0,insert.length() - 1) + ")\n"
-                + " values " + "(";
+                + " VALUES " + "(";
         for (Field field : fields) {
             insert += createFieldAndType(field) + ",";
         }
@@ -267,13 +266,13 @@ public class SQLGenerateUtil {
 
         String insertSelective = createSqlStatementTag(
                 INSERT,METHOD_INSERTSELECTIVE, fullName,null,null) + "\n"
-                + "insert into " + tableName + "\n"
+                + "INSERT INTO " + tableName + "\n"
                 + createTrimTag("(",")",",") +"\n";
         for (Field field : fields) {
             insertSelective += createIfTag(field.getName()) + "\n";
         }
         insertSelective += TRIM_SUFFIX + "\n"
-                + createTrimTag("values (",")",",")+"\n";
+                + createTrimTag("VALUES (",")",",")+"\n";
         for (Field field : fields) {
             insertSelective += createIfDbTag(field) + "\n";
         }
@@ -281,24 +280,24 @@ public class SQLGenerateUtil {
 
         String updateByPrimaryKeySelective = createSqlStatementTag(
                 UPDATE,METHOD_UPDATEBYPRIMARYKEYSELECTIVE,fullName,null,null) + "\n"
-                + "update " + tableName + "\n"
+                + "UPDATE " + tableName + "\n"
                 + SET_PREFIX + "\n";
         for (Field field : fieldsExcludePrimaryKey) {
             updateByPrimaryKeySelective += createIfUpdateTag(field) + "\n";
         }
         updateByPrimaryKeySelective += SET_SUFFIX + "\n"
-                + "where " + formatCamel2DBfield(primaryKey)
+                + "WHERE " + dbPrimaryKey
                 + " = " + createFieldAndType(primaryKeyField) + "\n" +UPDATE_SUFFIX;
 
         String updateByPrimaryKey = createSqlStatementTag(
                 UPDATE,METHOD_UPDATEBYPRIMARYKEY,fullName,null,null) + "\n"
-                + "update " + tableName + "\n"
-                + "set ";
+                + "UPDATE " + tableName + "\n"
+                + "SET ";
         for (Field field: fieldsExcludePrimaryKey) {
             updateByPrimaryKey += formatCamel2DBfield(field.getName()) + " = " + createFieldAndType(field) + ",\n";
         }
         updateByPrimaryKey = updateByPrimaryKey.substring(0,updateByPrimaryKey.length() - 2)
-                + "\nwhere " + primaryKey + "=" + createFieldAndType(primaryKeyField) + "\n"
+                + "\nWHERE " + dbPrimaryKey + "=" + createFieldAndType(primaryKeyField) + "\n"
                 + UPDATE_SUFFIX;
 
         content.add(MYBATIS3_XML_HEAD);
@@ -357,7 +356,7 @@ public class SQLGenerateUtil {
 
     private static String createIfAndTag(Field field) {
         return "<if test=\"" + field.getName() + " != null\" > \n"
-                + "and " + formatCamel2DBfield(field.getName()) + " = " + createFieldAndType(field)
+                + "AND " + formatCamel2DBfield(field.getName()) + " = " + createFieldAndType(field)
                 + "\n</if>\n";
     }
 
@@ -410,8 +409,8 @@ public class SQLGenerateUtil {
     }
 
     public static void main(String[] args) throws Exception{
-        createCommonSQLStatements(Man.class,ManMapper.class,"id","man");
-//        createCommonMapperStatements(Man.class);
-//        createCommonDBSQLStatements(BaseVechile.class,"color","base_vehicle");
+//        createCommonSQLStatements(BaseVechile.class,BaseVechileMapper.class,"color","industry");
+//        createCommonMapperStatements(Industry.class);
+//        createCommonDBSQLStatements(BaseVechile.class,"color","baseVehicle");
     }
 }
