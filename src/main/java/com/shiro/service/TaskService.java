@@ -14,7 +14,7 @@ import java.util.Date;
 public class TaskService {
 
     @MyAnnotation(message = "hello")
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0/15 * * * * ?")
     public void scheduleTask() {
         System.out.println("execute task ..." + DateUtil.format(new Date()));
     }
