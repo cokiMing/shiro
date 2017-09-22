@@ -78,7 +78,7 @@ public class RemoteAspect extends AbstractCommonComponent{
         Signature sig = point.getSignature();
         MethodSignature msig;
         if (!(sig instanceof MethodSignature)) {
-            throw new IllegalArgumentException("该注解只能用于方法");
+            throw new IllegalArgumentException("method invalid");
         }
         msig = (MethodSignature) sig;
         Object target = point.getTarget();
